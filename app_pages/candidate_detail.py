@@ -223,12 +223,15 @@ with st.container(border=True):
             key=f"seg_status_{tic_id}_{sector}",
         )
 
+    txt_key = f"txt_notes_{tic_id}_{sector}"
+    if txt_key not in st.session_state:
+        st.session_state[txt_key] = existing_review.get("notes", "")
+
     notes_val = st.text_area(
         t("detail_review_notes"),
-        value=existing_review.get("notes", ""),
         placeholder=t("detail_review_notes_placeholder"),
         height=90,
-        key=f"txt_notes_{tic_id}_{sector}",
+        key=txt_key,
     )
 
     btn_col1, btn_col2 = st.columns([1.5, 3], vertical_alignment="center")
