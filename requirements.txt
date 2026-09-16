@@ -8,3 +8,4 @@ pandas>=2.0
 matplotlib>=3.7
 tqdm>=4.65
 plotly>=5.15.0
+openpyxl>=3.1.0
