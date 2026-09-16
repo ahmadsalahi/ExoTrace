@@ -15,7 +15,15 @@ import streamlit as st
 
 
 def get_browser_executable() -> str:
-    """Find Microsoft Edge or Google Chrome executable on Windows."""
+    """Find Microsoft Edge or Google Chrome executable on Windows/Linux."""
+    import shutil
+    # 1. Check PATH first (this works perfectly for Streamlit Cloud Linux containers)
+    for exe in ["chromium", "chromium-browser", "google-chrome", "chrome", "msedge"]:
+        path = shutil.which(exe)
+        if path:
+            return path
+            
+    # 2. Fallback to static Windows paths
     candidates = [
         r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
         r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",

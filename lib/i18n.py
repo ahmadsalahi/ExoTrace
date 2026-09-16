@@ -257,18 +257,14 @@ def inject_rtl_css():
            SIDEBAR ARCHITECTURE (Desktop Pinned + Mobile Drawer + Hamburger)
            ══════════════════════════════════════════════════════════════════ */
 
-        /* 1. Header & Toolbar: Transparent, pass-through clicks */
+        /* 1. Header & Toolbar: Completely Hidden */
         [data-testid="stHeader"],
-        [data-testid="stToolbar"] {{
-            background: transparent !important;
-            box-shadow: none !important;
-            pointer-events: none !important;
-        }}
-
-        /* 2. Hide unwanted Streamlit header buttons (Deploy & 3-dots MainMenu) */
+        [data-testid="stToolbar"],
+        [data-testid="stDecoration"],
         .stAppDeployButton,
         [data-testid="stMainMenu"] {{
             display: none !important;
+            visibility: hidden !important;
         }}
 
         /* 3. The Hamburger Menu Button (Streamlit 1.63 stExpandSidebarButton) */
@@ -1006,8 +1002,7 @@ def inject_rtl_css():
         small[data-testid="InputInstructions"],
         .stTextInput [data-testid="InputInstructions"],
         .stNumberInput [data-testid="InputInstructions"],
-        .stTextArea [data-testid="InputInstructions"],
-        div:has(> [data-testid="InputInstructions"]) {{
+        .stTextArea [data-testid="InputInstructions"] {{
             display: none !important;
             visibility: hidden !important;
             height: 0 !important;

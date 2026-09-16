@@ -202,55 +202,50 @@ with st.container(border=True):
     current_class = existing_review.get("classification", class_options[0])
     class_idx = class_options.index(current_class) if current_class in class_options else 0
 
-    rev_col1, rev_col2 = st.columns(2)
+    with st.form(key=f"review_form_{tic_id}_{sector}", border=False):
+        rev_col1, rev_col2 = st.columns(2)
 
-    with rev_col1:
-        classification_val = st.selectbox(
-            t("detail_review_classification"),
-            options=class_options,
-            index=class_idx,
-            key=f"sel_class_{tic_id}_{sector}",
+        with rev_col1:
+            classification_val = st.selectbox(
+                t("detail_review_classification"),
+                options=class_options,
+                index=class_idx,
+            )
+
+        with rev_col2:
+            status_options = [t("review_pending"), t("review_approved"), t("review_rejected")]
+            current_status = existing_review.get("status", status_options[0])
+
+            status_val = st.segmented_control(
+                t("detail_review_status"),
+                options=status_options,
+                default=current_status if current_status in status_options else status_options[0],
+            )
+
+        notes_val = st.text_area(
+            t("detail_review_notes"),
+            value=existing_review.get("notes", ""),
+            placeholder=t("detail_review_notes_placeholder"),
+            height=90,
         )
 
-    with rev_col2:
-        status_options = [t("review_pending"), t("review_approved"), t("review_rejected")]
-        current_status = existing_review.get("status", status_options[0])
+        btn_col1, btn_col2 = st.columns([1.5, 3], vertical_alignment="center")
+        with btn_col1:
+            submitted = st.form_submit_button(
+                t("detail_save_review"),
+                type="primary",
+                icon=":material/save:",
+                use_container_width=True,
+            )
+            if submitted:
+                final_class = classification_val or current_class
+                final_status = status_val or current_status
+                final_notes = (notes_val or "").strip()
 
-        status_val = st.segmented_control(
-            t("detail_review_status"),
-            options=status_options,
-            default=current_status if current_status in status_options else status_options[0],
-            key=f"seg_status_{tic_id}_{sector}",
-        )
-
-    txt_key = f"txt_notes_{tic_id}_{sector}"
-    if txt_key not in st.session_state:
-        st.session_state[txt_key] = existing_review.get("notes", "")
-
-    notes_val = st.text_area(
-        t("detail_review_notes"),
-        placeholder=t("detail_review_notes_placeholder"),
-        height=90,
-        key=txt_key,
-    )
-
-    btn_col1, btn_col2 = st.columns([1.5, 3], vertical_alignment="center")
-    with btn_col1:
-        if st.button(
-            t("detail_save_review"),
-            type="primary",
-            icon=":material/save:",
-            key=f"btn_save_review_{tic_id}_{sector}",
-            width="stretch",
-        ):
-            final_class = classification_val or current_class
-            final_status = status_val or current_status
-            final_notes = (notes_val or "").strip()
-
-            save_review(tic_id, sector, final_class, final_status, final_notes, event_id=event_id, start_time=start_time)
-            st.session_state[f"review_just_saved_{tic_id}_{sector}"] = True
-            st.toast(f"✅ {t('detail_saved_success')}", icon="💾")
-            st.rerun()
+                save_review(tic_id, sector, final_class, final_status, final_notes, event_id=event_id, start_time=start_time)
+                st.session_state[f"review_just_saved_{tic_id}_{sector}"] = True
+                st.toast(f"✅ {t('detail_saved_success')}", icon="💾")
+                st.rerun()
 
     with btn_col2:
         last_ts = existing_review.get("timestamp")
